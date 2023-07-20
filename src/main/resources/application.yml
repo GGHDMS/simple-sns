@@ -1,1 +1,15 @@
+spring:
+  jpa:
+    database: postgresql
+    hibernate.dialect: org.hibernate.dialect.PostgresQSLDialect
+    hibernate.ddl-auto: update
+    properties.hibernate.format_sql: true
+    show-sql: true
+
+  datasource:
+    hikari.maximum-pool-size: 4
+    url: jdbc:postgresql://localhost:5432/sns
+    platform: postgres
+    username:
+    password:
 

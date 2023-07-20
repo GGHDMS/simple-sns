@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import study.sns.controller.request.UserJoinRequest;
 import study.sns.controller.request.UserLoginRequest;
+import study.sns.exception.ErrorCode;
 import study.sns.exception.SnsApplicationException;
 import study.sns.model.User;
 import study.sns.service.UserService;
@@ -56,7 +57,7 @@ public class UserControllerTest {
 
         // TODO: mocking
 
-        when(userService.join(userName, password)).thenThrow(new SnsApplicationException());
+        when(userService.join(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +91,7 @@ public class UserControllerTest {
 
         // TODO: mocking
 
-        when(userService.login(userName, password)).thenThrow(new SnsApplicationException());
+        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +108,8 @@ public class UserControllerTest {
 
         // TODO: mocking
 
-        when(userService.login(userName, password)).thenThrow(new SnsApplicationException());
+        when(userService.login(userName, password))
+                .thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
