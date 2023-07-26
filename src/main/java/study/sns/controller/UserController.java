@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import study.sns.controller.request.UserJoinRequest;
+import study.sns.controller.request.UserLoginRequest;
 import study.sns.controller.response.Response;
 import study.sns.controller.response.UserJoinResponse;
+import study.sns.controller.response.UserLoginResponse;
 import study.sns.service.UserService;
 
 @RestController
@@ -21,5 +23,11 @@ public class UserController {
     public Response<UserJoinResponse> join(@RequestBody UserJoinRequest request) {
         UserJoinResponse response = UserJoinResponse.fromUser(userService.join(request.getUserName(), request.getPassword()));
         return Response.success(response);
+    }
+
+    @PostMapping("/login")
+    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
+        String token = userService.login(request.getUserName(), request.getPassword());
+        return Response.success(new UserLoginResponse(token));
     }
 }

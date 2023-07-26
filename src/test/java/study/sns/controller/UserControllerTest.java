@@ -57,7 +57,7 @@ public class UserControllerTest {
 
         // TODO: mocking
 
-        when(userService.join(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
+        when(userService.join(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME));
 
         mvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -76,12 +76,12 @@ public class UserControllerTest {
 
         when(userService.login(userName, password)).thenReturn("test_token");
 
-        mvc.perform(post("/api/v1/users/join")
+        mvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         //TODO: add request body
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName, password)))
                 ).andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -91,9 +91,9 @@ public class UserControllerTest {
 
         // TODO: mocking
 
-        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
+        when(userService.login(userName, password)).thenThrow(new SnsApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        mvc.perform(post("/api/v1/users/join")
+        mvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         //TODO: add request body
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName, password)))
@@ -109,9 +109,9 @@ public class UserControllerTest {
         // TODO: mocking
 
         when(userService.login(userName, password))
-                .thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
+                .thenThrow(new SnsApplicationException(ErrorCode.INVALID_PASSWORD));
 
-        mvc.perform(post("/api/v1/users/join")
+        mvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         //TODO: add request body
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName, password)))
