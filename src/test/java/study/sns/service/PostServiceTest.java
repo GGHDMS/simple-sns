@@ -9,8 +9,8 @@ import study.sns.exception.ErrorCode;
 import study.sns.exception.SnsApplicationException;
 import study.sns.fixture.PostEntityFixture;
 import study.sns.fixture.UserEntityFixture;
-import study.sns.model.entiry.PostEntity;
-import study.sns.model.entiry.UserEntity;
+import study.sns.model.entity.PostEntity;
+import study.sns.model.entity.UserEntity;
 import study.sns.repository.PostEntityRepository;
 import study.sns.repository.UserEntityRepository;
 
@@ -63,11 +63,12 @@ public class PostServiceTest {
         String userName = "userName";
         Long postId = 1L;
 
-        PostEntity postEntity = PostEntityFixture.get(userName, postId);
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1L);
         UserEntity userEntity = postEntity.getUser();
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
+        when(postEntityRepository.saveAndFlush(any())).thenReturn(postEntity);
 
         Assertions.assertDoesNotThrow(() -> postService.modify(title, body, userName, postId));
     }
@@ -79,7 +80,7 @@ public class PostServiceTest {
         String userName = "userName";
         Long postId = 1L;
 
-        PostEntity postEntity = PostEntityFixture.get(userName, postId);
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1L);
         UserEntity userEntity = postEntity.getUser();
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
@@ -97,8 +98,8 @@ public class PostServiceTest {
         String userName = "userName";
         Long postId = 1L;
 
-        PostEntity postEntity = PostEntityFixture.get(userName, postId);
-        UserEntity writer = UserEntityFixture.get("username1", "password");
+        PostEntity postEntity = PostEntityFixture.get(userName, postId, 1L);
+        UserEntity writer = UserEntityFixture.get("username1", "password", 2L);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writer));
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));

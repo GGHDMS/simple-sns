@@ -1,4 +1,4 @@
-package study.sns.model.entiry;
+package study.sns.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;

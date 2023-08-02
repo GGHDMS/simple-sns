@@ -14,11 +14,13 @@ import study.sns.controller.request.PostCreateRequest;
 import study.sns.controller.request.PostModifyRequest;
 import study.sns.exception.ErrorCode;
 import study.sns.exception.SnsApplicationException;
+import study.sns.fixture.PostEntityFixture;
+import study.sns.model.Post;
 import study.sns.service.PostService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -71,6 +73,9 @@ public class PostControllerTest {
     void 포스트수정() throws Exception {
         String title = "title";
         String body = "body";
+
+        when(postService.modify(eq(title), eq(body), any(), any()))
+                .thenReturn(Post.fromEntity(PostEntityFixture.get("username", 1L, 1L)));
         mockMvc.perform(put("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.sns.exception.ErrorCode;
 import study.sns.exception.SnsApplicationException;
 import study.sns.model.User;
-import study.sns.model.entiry.UserEntity;
+import study.sns.model.entity.UserEntity;
 import study.sns.repository.UserEntityRepository;
 import study.sns.util.JwtTokenUtils;
 

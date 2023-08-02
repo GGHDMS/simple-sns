@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import study.sns.model.entiry.UserEntity;
+import study.sns.model.entity.UserEntity;
 
 import java.sql.Timestamp;
 import java.util.Collection;

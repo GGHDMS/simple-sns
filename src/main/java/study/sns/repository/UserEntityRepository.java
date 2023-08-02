@@ -1,7 +1,7 @@
 package study.sns.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import study.sns.model.entiry.UserEntity;
+import study.sns.model.entity.UserEntity;
 
 import java.util.Optional;
 
