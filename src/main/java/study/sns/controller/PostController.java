@@ -39,11 +39,22 @@ public class PostController {
 
     @GetMapping
     public Response<Page<PostResponse>> list(Pageable pageable) {
-         return Response.success(postService.list(pageable).map(PostResponse::fromPost));
+        return Response.success(postService.list(pageable).map(PostResponse::fromPost));
     }
 
     @GetMapping("/my")
     public Response<Page<PostResponse>> my(Pageable pageable, Authentication authentication) {
         return Response.success(postService.my(authentication.getName(), pageable).map(PostResponse::fromPost));
+    }
+
+    @PostMapping("/{postId}/likes")
+    public Response<Void> like(@PathVariable Long postId, Authentication authentication) {
+        postService.like(postId, authentication.getName());
+        return Response.success();
+    }
+
+    @GetMapping("/{postId}/likes")
+    public Response<Integer> likeCount(@PathVariable Long postId) {
+        return Response.success(postService.likeCount(postId));
     }
 }

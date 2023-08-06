@@ -158,7 +158,7 @@ public class PostControllerTest {
 
     @Test
     @WithMockUser
-    void 포스트삭제시_삭제하려는_포스트가_없는경우ㅓ() throws Exception {
+    void 포스트삭제시_삭제하려는_포스트가_없는경우() throws Exception {
         //mocking
         doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).delete(any(), any());
         mockMvc.perform(delete("/api/v1/posts/1")
@@ -182,7 +182,6 @@ public class PostControllerTest {
     @WithAnonymousUser
     void 목록요성치_로그인하지_않은경우() throws Exception {
         when(postService.list(any())).thenReturn(Page.empty());
-
         mockMvc.perform(get("/api/v1/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
@@ -209,6 +208,35 @@ public class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void 좋아요기능() throws Exception {
+        mockMvc.perform(post("/api/v1/posts/1/likes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void 좋아요버튼클릭시_로그인하지_않은경우() throws Exception {
+        mockMvc.perform(post("/api/v1/posts/1/likes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void 좋아요버튼클릭시_게시물이_없는경우() throws Exception {
+        doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).like(any(), any());
+
+        mockMvc.perform(post("/api/v1/posts/1/likes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isNotFound());
     }
 }
 
