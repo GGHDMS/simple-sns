@@ -111,4 +111,9 @@ public class PostService {
         // check liked -> throw
         return likeEntityRepository.countAllByPost(postEntity);
     }
+
+    public void comment(Long posId, String userName) {
+
+    }
+
 }
