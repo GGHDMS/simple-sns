@@ -5,8 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import study.sns.controller.request.PostCommentRequest;
 import study.sns.controller.request.PostCreateRequest;
 import study.sns.controller.request.PostModifyRequest;
+import study.sns.controller.response.CommentResponse;
 import study.sns.controller.response.PostResponse;
 import study.sns.controller.response.Response;
 import study.sns.model.Post;
@@ -57,4 +59,17 @@ public class PostController {
     public Response<Integer> likeCount(@PathVariable Long postId) {
         return Response.success(postService.likeCount(postId));
     }
+
+    @PostMapping("/{postId}/comments")
+    public Response<Void> comment(@PathVariable Long postId, @RequestBody PostCommentRequest request, Authentication authentication) {
+        postService.comment(postId, authentication.getName(), request.getComment());
+        return Response.success();
+    }
+
+    @GetMapping("/{postId}/comments")
+    public Response<Page<CommentResponse>> getComment(@PathVariable Long postId, Pageable pageable) {
+        return Response.success(postService.getComments(postId, pageable).map(CommentResponse::fromComment));
+    }
+
+
 }
