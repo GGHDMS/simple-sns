@@ -140,7 +140,7 @@ public class UserControllerTest {
     public void 알람리스트요청시_로그인하지_않은경우() throws Exception {
         when(userService.alarmList(any(), any())).thenReturn(Page.empty());
 
-        mvc.perform(get("/api/v1/users/alarms")
+        mvc.perform(get("/api/v1/users/alarm")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());

@@ -13,6 +13,7 @@ import study.sns.model.Alarm;
 import study.sns.model.User;
 import study.sns.model.entity.UserEntity;
 import study.sns.repository.AlarmEntityRepository;
+import study.sns.repository.UserCasheRepository;
 import study.sns.repository.UserEntityRepository;
 import study.sns.util.JwtTokenUtils;
 
@@ -23,6 +24,7 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
     private final BCryptPasswordEncoder encoder;
     private final AlarmEntityRepository alarmEntityRepository;
+    private final UserCasheRepository userCasheRepository;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -31,8 +33,10 @@ public class UserService {
     private Long expiredTimeMs;
 
     public User loadUserByUserName(String userName) {
-        return userEntityRepository.findByUserName(userName).map(User::fromEntity).orElseThrow(()
-                -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName))
+        return userCasheRepository.getUser(userName).orElseGet(() ->
+                userEntityRepository.findByUserName(userName).map(User::fromEntity).orElseThrow(()
+                        -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName))
+                )
         );
     }
 
@@ -51,20 +55,18 @@ public class UserService {
     // TODO: implement
     public String login(String userName, String password) {
         // 회원가입 여부 체크
-        UserEntity userEntity = userEntityRepository.findByUserName(userName)
-                .orElseThrow(() -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userName)));
+        User user = loadUserByUserName(userName);
+        userCasheRepository.setUser(user);
 
         // 비밀번호 체크
-        if (!encoder.matches(password, userEntity.getPassword())) {
+        if (!encoder.matches(password, user.getPassword())) {
             throw new SnsApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 
         // 토큰 생성
-
         return JwtTokenUtils.generateToken(userName, secretKey, expiredTimeMs);
     }
 
-    // TODO : alarm return
     public Page<Alarm> alarmList(Long userId, Pageable pageable) {
         return alarmEntityRepository.findAllByUserId(userId, pageable).map(Alarm::fromEntity);
     }
