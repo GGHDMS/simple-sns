@@ -8,16 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import study.sns.exception.ErrorCode;
 import study.sns.exception.SnsApplicationException;
+import study.sns.model.AlarmArgs;
+import study.sns.model.AlarmType;
 import study.sns.model.Comment;
 import study.sns.model.Post;
-import study.sns.model.entity.CommentEntity;
-import study.sns.model.entity.LikeEntity;
-import study.sns.model.entity.PostEntity;
-import study.sns.model.entity.UserEntity;
-import study.sns.repository.CommentEntityRepository;
-import study.sns.repository.LikeEntityRepository;
-import study.sns.repository.PostEntityRepository;
-import study.sns.repository.UserEntityRepository;
+import study.sns.model.entity.*;
+import study.sns.repository.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +23,7 @@ public class PostService {
     private final UserEntityRepository userEntityRepository;
     private final LikeEntityRepository likeEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
+    private final AlarmEntityRepository alarmEntityRepository;
 
     @Transactional
     public void create(String title, String body, String userName) {
@@ -87,6 +84,8 @@ public class PostService {
 
         //like save
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
+
+        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArgs(userEntity.getId(), postEntity.getId())));
     }
 
     public Integer likeCount(Long postId) {
@@ -103,6 +102,8 @@ public class PostService {
 
         //comment save
         commentEntityRepository.save(CommentEntity.of(userEntity, postEntity, comment));
+
+        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_COMMENT_ON_POST, new AlarmArgs(userEntity.getId(), postEntity.getId())));
     }
 
     public Page<Comment> getComments(Long postId, Pageable pageable) {

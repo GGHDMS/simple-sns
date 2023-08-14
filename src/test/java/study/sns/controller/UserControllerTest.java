@@ -129,7 +129,7 @@ public class UserControllerTest {
     public void 알람기능() throws Exception {
         when(userService.alarmList(any(), any())).thenReturn(Page.empty());
 
-        mvc.perform(get("/api/v1/users/alarms")
+        mvc.perform(get("/api/v1/users/alarm")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
