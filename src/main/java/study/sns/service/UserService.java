@@ -2,6 +2,8 @@ package study.sns.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,5 +59,11 @@ public class UserService {
         // 토큰 생성
 
         return JwtTokenUtils.generateToken(username, secretKey, expiredTimeMs);
+    }
+
+    // TODO : alarm return
+    public Page<Void> alarmList(String userName, Pageable pageable) {
+
+        return Page.empty();
     }
 }
