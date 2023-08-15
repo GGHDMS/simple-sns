@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,23 +25,32 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final String key;
     private final UserService userService;
 
+    private final static List<String> TOKEN_IM_PARAM_URLS = List.of("/api/v1/users/alarm/subscribe");
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        //get header
-        final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header == null || !header.startsWith("Bearer ")) {
-            log.info("Error occurs while getting header. header is null or invalid={}", request.getRequestURL());
-            filterChain.doFilter(request, response);
-            return;
-        }
+        final String token;
 
         try {
-            final String token = header.split(" ")[1].trim();
+            if (TOKEN_IM_PARAM_URLS.contains(request.getRequestURI())) {
+                log.info("Request with {} check the query param", request.getRequestURI());
+                token = request.getQueryString().split("=")[1].trim();
+            } else {
+                final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-            if (JwtTokenUtils.isExpired(token, key)) {
-                log.error("Key is expired");
-                filterChain.doFilter(request, response);
-                return;
+                if (header == null || !header.startsWith("Bearer ")) {
+                    log.info("Error occurs while getting header. header is null or invalid={}", request.getRequestURL());
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
+                token = header.split(" ")[1].trim();
+
+                if (JwtTokenUtils.isExpired(token, key)) {
+                    log.error("Key is expired");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
             }
 
             String userName = JwtTokenUtils.getUserName(token, key);
